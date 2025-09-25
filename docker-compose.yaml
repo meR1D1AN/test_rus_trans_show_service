@@ -41,7 +41,7 @@ services:
     volumes:
       - certbot_conf:/etc/letsencrypt
       - certbot_www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot -d mered1an.ru --email mered1an@live.com --agree-tos --no-eff-email
+    command: certonly --webroot -w /var/www/certbot -d mer1d1an.ru --email mered1an@live.com --agree-tos --no-eff-email
 
 
   nginx:
