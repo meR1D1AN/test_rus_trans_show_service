@@ -1,0 +1,47 @@
+{% extends "transport_app/base.html" %}
+<title>
+    {% block title %}
+    {% if location %}
+    Сохранить заявку
+    {% else %}
+    Создать заявку
+    {% endif %}
+    {% endblock %}
+</title>
+{% block content %}
+
+<div class="container mt-4">
+    <h3>
+        {% if location %}
+        Сохранить заявку
+        {% else %}
+        Создать заявку
+        {% endif %}
+    </h3>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Описание</label>
+            {{ form.description }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Откуда</label>
+            {{ form.from_location }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Куда</label>
+            {{ form.to_location }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Водитель</label>
+            {{ form.driver }}
+        </div>
+        <button class="btn btn-primary" type="submit">Создать</button>
+        {% if form.instance.pk %}
+        <a href="{% url 'transport_app:order_detail' form.instance.pk %}" class="btn btn-secondary">Отмена</a>
+        {% else %}
+        <a href="{% url 'transport_app:order_list' %}" class="btn btn-secondary">Отмена</a>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

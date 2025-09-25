@@ -1,0 +1,60 @@
+{% extends "transport_app/base.html" %}
+{% block title %}Пользователи{% endblock %}
+
+{% block content %}
+<h1>Пользователи</h1>
+
+<div class="btn-group mb-3" role="group" aria-label="Basic radio toggle button group">
+    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+    <label class="btn btn-outline-primary" for="btnradio1" onclick="showTab('managers')">Менеджеры</label>
+    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+    <label class="btn btn-outline-primary" for="btnradio2" onclick="showTab('drivers')">Водители</label>
+</div>
+
+<div id="managers" class="tab">
+    <h3>Менеджеры</h3>
+    <table class="table table-striped">
+        <tr>
+            <th>ID</th>
+            <th>ФИО</th>
+            <th>Заявок</th>
+        </tr>
+        {% for u in users %}
+        {% if u.role == 'Manager' %}
+        <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.first_name }} {{ u.last_name }}</td>
+            <td>{{ u.order_count }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+</div>
+
+<div id="drivers" class="tab" style="display:none">
+    <h3>Водители</h3>
+    <table class="table table-striped">
+        <tr>
+            <th>ID</th>
+            <th>ФИО</th>
+            <th>Заявок</th>
+        </tr>
+        {% for u in users %}
+        {% if u.role == 'Driver' %}
+        <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.first_name }} {{ u.last_name }}</td>
+            <td>{{ u.order_count }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+</div>
+
+<script>
+    function showTab(tab) {
+        document.getElementById("managers").style.display = (tab === "managers") ? "block" : "none";
+        document.getElementById("drivers").style.display = (tab === "drivers") ? "block" : "none";
+    }
+</script>
+{% endblock %}

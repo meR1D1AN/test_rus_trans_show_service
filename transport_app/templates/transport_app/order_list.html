@@ -1,0 +1,57 @@
+{% extends "transport_app/base.html" %}
+<title>{% block title %}Список заявок{{ order.id }}{% endblock %}</title>
+{% block content %}
+
+<h2>Список заявок</h2>
+{% if not user.role == "Driver" %}
+<a href="{% url 'transport_app:order_create' %}" class="btn btn-success mb-3">Создать заявку</a>
+{% endif %}
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th style="text-align: center;">ID</th>
+        <th>Описание</th>
+        <th>Откуда</th>
+        <th>Куда</th>
+        <th>Менеджер</th>
+        {% if not user.role == "Driver" %}
+        <th>Водитель</th>
+        <th>Статус</th>
+        {% endif %}
+        {% if not user.role == "Manager" %}
+        <th>Статус</th>
+        {% endif %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for order in orders %}
+    <tr>
+        <td style="text-align: center;">{{ order.id }}</td>
+        <td>{{ order.description }}</td>
+        <td><a href="{% url 'transport_app:order_detail' order.pk %}">{{ order.from_location }}</a></td>
+        <td><a href="{% url 'transport_app:order_detail' order.pk %}">{{ order.to_location }}</a></td>
+        <td><a href="{% url 'transport_app:order_detail' order.pk %}">{{ order.manager.get_full_name }}</a></td>
+        {% if not user.role == "Driver" %}
+        <td><a href="{% url 'transport_app:order_detail' order.pk %}">{{ order.driver.get_full_name }}</a></td>
+        <td>{{ order.get_status_display }}</td>
+        {% endif %}
+
+        {% if not user.role == "Manager" %}
+        {% if order.status == "Assigned" %}
+        <td><a href="{% url 'transport_app:accept_order' order.id %}" class="btn btn-success mb-3">Принять</a></td>
+        {% elif order.status == "In progress" %}
+        <td><a href="{% url 'transport_app:complete_order' order.id %}" class="btn btn-primary mb-3">Завершить</a></td>
+        {% else %}
+        <td>{{ order.get_status_display }}</td>
+        {% endif %}
+        {% endif %}
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">Нет заявок</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

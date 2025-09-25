@@ -1,0 +1,39 @@
+{% extends "transport_app/base.html" %}
+<title>{% block title %}Список местоположений{% endblock %}</title>
+{% block content %}
+<h2>Список местоположений</h2>
+{% if not user.role == "Manager" %}
+<a href="{% url 'transport_app:location_create' %}" class="btn btn-success mb-3">Создать местоположение</a>
+{% endif %}
+
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th style="text-align: center;">ID</th>
+        <th>Заявка</th>
+        {% if not user.role == "Driver" %}
+        <th>Водитель</th>
+        {% endif %}
+        <th>Координаты</th>
+        <th>Дата и время</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for location in object_list %}
+    <tr>
+        <td style="text-align: center;">{{ location.id }}</td>
+        <td><a href="{% url 'transport_app:location_detail' location.pk %}">{{ location.order }}</a></td>
+        {% if not user.role == "Driver" %}
+        <td>{{ location.driver }}</td>
+        {% endif %}
+        <td>Широта: {{ location.latitude }}</br>Долгота: {{ location.longitude }}</td>
+        <td>{{ location.timestamp }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5">Нет местоположений</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "transport_app/base.html" %}
+<title>
+    {% block title %}
+    {% if location %}
+    Сохранить местоположение
+    {% else %}
+    Создать местоположение
+    {% endif %}
+    {% endblock %}
+</title>
+{% block content %}
+
+<div class="container mt-4">
+    <h3>
+        {% if location %}
+        Сохранить местоположение
+        {% else %}
+        Создать местоположение
+        {% endif %}
+    </h3>
+    {{ form.errors }}
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Заявка</label>
+            {{ form.order }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Широта (от -90 до 90)</label>
+            {{ form.latitude }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Долгота (от -180 до 180)</label>
+            {{ form.longitude }}
+        </div>
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+        <button type="button" id="getLocation" class="btn btn-info">
+            Определить моё местоположение
+        </button>
+        {% if form.instance.pk %}
+        <a href="{% url 'transport_app:location_detail' form.instance.pk %}" class="btn btn-secondary ms-2">Отмена</a>
+        {% else %}
+        <a href="{% url 'transport_app:location_list' %}" class="btn btn-secondary ms-2">Отмена</a>
+        {% endif %}
+    </form>
+<script>
+    document.getElementById("getLocation").addEventListener("click", function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                document.getElementById("id_latitude").value = position.coords.latitude.toFixed(6);
+                document.getElementById("id_longitude").value = position.coords.longitude.toFixed(6);
+            }, function(error) {
+                alert("Ошибка при определении местоположения: " + error.message);
+            });
+        } else {
+            alert("Геолокация не поддерживается вашим браузером.");
+        }
+    });
+</script>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+[project]
+name = "test-rus-trans-show-service"
+version = "0.0.1"
+description = "Тестовое задание для Рус Транс Шоу Сервис"
+requires-python = ">=3.13"
+dependencies = [
+    "crispy-bootstrap5>=2025.6",
+    "django>=5.2.6",
+    "django-crispy-forms>=2.4",
+    "geopy>=2.4.1",
+    "gunicorn>=23.0.0",
+    "pillow>=11.3.0",
+    "psycopg2-binary>=2.9.10",
+    "python-dotenv>=1.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "faker>=37.8.0",
+    "pre-commit>=4.3.0",
+    "ruff>=0.13.1",
+    "tqdm>=4.67.1",
+]
+
+[tool.ruff]
+line-length = 119
+exclude = [
+    ".git",
+    ".gitignore",
+    "__pycache__",
+    "__init__.py",
+    "manage.py",
+    "pyproject.toml",
+    "migrations",
+    "tests.py",
+]
+target-version = "py313"
+fix = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.ruff.lint]
+ignore = ["E501", "W293"]
+select = ["E", "F", "I", "B", "C", "A", "N", "UP"]
+mccabe.max-complexity = 12

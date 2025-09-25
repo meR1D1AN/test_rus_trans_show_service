@@ -1,0 +1,66 @@
+{% extends "transport_app/base.html" %}
+
+<title>{% block title %}Заявка №{{ location.id }}{% endblock %}</title>
+{% block content %}
+<table class="table table-bordered">
+    <tbody>
+    <tr>
+        <th><p><strong>Заявка:</strong></p></th>
+        <td>{{ location.order }}</td>
+    </tr>
+    <tr>
+        <th><p><strong>Водитель:</strong></p></th>
+        <td>{{ location.driver }}</td>
+    </tr>
+    <tr>
+        <th><p><strong>Координаты:</strong></p></th>
+        <td>{{ location.latitude }}, {{ location.longitude }}</td>
+    </tr>
+    <tr>
+        <th><p><strong>Дата и время:</strong></p></th>
+        <td>{{ location.timestamp }}</td>
+    </tr>
+
+    </tbody>
+</table>
+{% if not user.role == 'Manager' %}
+<a href="{% url 'transport_app:location_update' location.pk %}" class="btn btn-warning">Редактировать</a>
+{% endif %}
+{% if user.is_superuser %}
+<a href="{% url 'transport_app:location_delete' location.pk %}" class="btn btn-danger">Удалить</a>
+{% endif %}
+<a href="{% url 'transport_app:location_list' %}" class="btn btn-secondary">Назад</a>
+
+
+<h3>Местоположение</h3>
+
+<div id="map" style="width: 650px; height: 450px;"></div>
+
+<script src="https://api-maps.yandex.ru/2.1/?apikey=Test&lang=ru_RU" type="text/javascript"></script>
+
+{% load l10n %}
+{% localize off %}
+<script>
+    ymaps.ready(init);
+
+    function init() {
+        var latitude = {{ location.latitude }};
+        var longitude = {{ location.longitude }};
+
+        var map = new ymaps.Map("map", {
+            center: [latitude, longitude],
+            zoom: 16
+        });
+
+        var placemark = new ymaps.Placemark([latitude, longitude], {
+            hintContent: 'Местоположение водителя',
+            balloonContent: 'Координаты: ' + latitude + ', ' + longitude
+        }, {
+            preset: 'islands#redDotIcon'
+        });
+
+        map.geoObjects.add(placemark);
+    }
+</script>
+{% endlocalize %}
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "transport_app/base.html" %}
+<title>{% block title %}Заявка №{{ order.id }}{% endblock %}</title>
+{% block content %}
+
+
+<table class="table table-bordered">
+    <tbody>
+    <tr>
+        <th class="p strong">Заявка:</th>
+        <td>{{ order }}</td>
+    </tr>
+    <tr>
+        <th class="p strong">Описание:</th>
+        <td>{{ order.description }}</td>
+    </tr>
+    <tr>
+        <th class="p strong">Откуда:</th>
+        <td>{{ order.from_location }}</td>
+    </tr>
+    <tr>
+        <th class="p strong">Куда:</th>
+        <td>{{ order.to_location }}</td>
+    </tr>
+    <tr>
+        <th class="p strong">Фотографии документов:</th>
+        <td>
+            {% for d in order.documents.all %}
+            <p>
+                <a href="{{ d.file.url }}" target="_blank">
+                    <img src="{{ d.file.url }}" alt="doc"
+                         style="width:120px; height:auto; border:1px solid #ddd; padding:4px">
+                </a>
+            </p>
+            <small class="text-muted">Загружено: {{ d.uploaded_at }}</small>
+
+            {% empty %}
+            <li class="text-muted">Пока нет загруженных фотографий</li>
+            {% endfor %}
+        </td>
+    </tr>
+
+
+    </tbody>
+
+</table>
+{% if is_driver %}
+<hr/>
+<h5>Загрузить фото документа</h5>
+<form method="post" enctype="multipart/form-data" action="{% url 'transport_app:upload_document' order.id %}">
+    {% csrf_token %}
+    {{ document_form.file }}
+    <div class="mt-2">
+        <button class="btn btn-success" type="submit">Сохранить</button>
+        <a href="{% url 'transport_app:order_list' %}" class="btn btn-secondary">Назад</a>
+    </div>
+</form>
+{% endif %}
+</div>
+{% if not user.role == 'Driver' %}
+<a href="{% url 'transport_app:order_update' order.pk %}" class="btn btn-warning">Редактировать</a>
+<a href="{% url 'transport_app:order_delete' order.pk %}" class="btn btn-danger">Удалить</a>
+<a href="{% url 'transport_app:order_list' %}" class="btn btn-secondary">Назад</a>
+{% endif %}
+{% endblock %}
