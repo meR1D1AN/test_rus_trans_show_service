@@ -109,6 +109,11 @@ LOGGING = {
     "loggers": {"django": {"handlers": ["console"], "level": "INFO"}},
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://mer1d1an.ru",
+    "http://mer1d1an.ru",
+]
+
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 465))
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
