@@ -33,11 +33,11 @@ services:
       sh -c 'uv run python3 manage.py collectstatic --noinput &&
              uv run python3 manage.py makemigrations --noinput &&
              uv run python3 manage.py migrate &&
-             uv run python3 manage.py create_test_data &&
+             uv run python3 manage.py test_create &&
              uv run gunicorn config.wsgi:application --bind 0.0.0.0:${PORT_API} --workers 3 --timeout 60 --preload'
 
   nginx:
-    image: chocolatefrappe/nginx-modules:1.29.1-acme
+    image: nginx:1.29.1
     container_name: rus_trans_nginx
     restart: unless-stopped
     ports:
