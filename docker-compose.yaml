@@ -36,19 +36,8 @@ services:
              uv run python3 manage.py create_test_data &&
              uv run gunicorn config.wsgi:application --bind 0.0.0.0:${PORT_API} --workers 3 --timeout 60 --preload'
 
-#  certbot:
-#    image: certbot/certbot:latest
-#    container_name: rus_trans_certbot
-#    restart: unless-stopped
-#    volumes:
-#      - certbot_conf:/etc/letsencrypt
-#      - certbot_www:/var/www/certbot
-#    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-#    depends_on:
-#      - nginx
-
   nginx:
-    image: chocolatefrappe/nginx-modules:1.29  # С ACME-модулем
+    image: chocolatefrappe/nginx-modules:1.29.1-acme
     container_name: rus_trans_nginx
     restart: unless-stopped
     ports:
