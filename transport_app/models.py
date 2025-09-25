@@ -66,7 +66,7 @@ class Order(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"№-{self.id}: {self.description[:20]} ({self.status})"
+        return f"№-{self.id}: {self.description[:20]} ({self.get_status_display()})"
 
 
 @receiver(pre_save, sender=Order)

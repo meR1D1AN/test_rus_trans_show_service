@@ -1,4 +1,5 @@
 import os
+import random
 
 from django.contrib.auth.hashers import make_password
 from django.core.management import BaseCommand
@@ -6,8 +7,8 @@ from django.db import transaction
 from faker import Faker
 from tqdm import tqdm
 
-from conts.choices import RoleChoices
-from transport_app.models import User
+from conts.choices import OrderChoices, RoleChoices
+from transport_app.models import Location, Order, User
 
 
 class Command(BaseCommand):
@@ -19,6 +20,8 @@ class Command(BaseCommand):
         with transaction.atomic():
             self.create_fixed_users()
             self.create_random_users()
+            self.create_orders()
+            self.create_locations()
 
     def create_fixed_users(self):
         users_data = [
@@ -113,3 +116,58 @@ class Command(BaseCommand):
 
         User.objects.bulk_create(users_to_create)
         self.stdout.write(self.style.SUCCESS("Тестовые менеджеры и водители созданы."))
+
+    def create_orders(self):
+        managers = list(User.objects.filter(role=RoleChoices.MANAGER))
+        drivers = list(User.objects.filter(role=RoleChoices.DRIVER))
+
+        orders_create = []
+        for _ in tqdm(range(1000), desc="Создание заявок"):
+            manager = random.choice(managers)
+            driver = random.choice(drivers)
+
+            order = Order(
+                description=self.fake.text(max_nb_chars=100),
+                from_location=self.fake.address(),
+                to_location=self.fake.address(),
+                status=OrderChoices.CREATED,
+                manager=manager,
+                driver=driver,
+            )
+            if order.status == OrderChoices.CREATED:
+                if random.random() < 0.5:
+                    pass
+                else:
+                    if random.random() < 0.5:
+                        order.status = OrderChoices.IN_PROGRESS
+                    else:
+                        order.status = OrderChoices.COMPLETED
+            if order.driver and order.status == OrderChoices.CREATED:
+                order.status = OrderChoices.ASSIGNED
+
+            orders_create.append(order)
+
+        Order.objects.bulk_create(orders_create)
+        self.stdout.write(self.style.SUCCESS("Тестовые заявки созданы."))
+
+    def create_locations(self):
+        assigned_orders = Order.objects.filter(status=OrderChoices.ASSIGNED)
+
+        locations_create = []
+        for order in tqdm(assigned_orders, desc="Создание местоположений"):
+            num_locations = random.randint(1, 5)
+
+            for _ in range(num_locations):
+                latitude = round(random.uniform(41.18, 81.86), 6)
+                longitude = round(random.uniform(19.62, 169.03), 6)
+
+                location = Location(
+                    order=order,
+                    driver=order.driver,
+                    latitude=latitude,
+                    longitude=longitude,
+                )
+                locations_create.append(location)
+
+        Location.objects.bulk_create(locations_create)
+        self.stdout.write(self.style.SUCCESS("Тестовые местоположения созданы. "))

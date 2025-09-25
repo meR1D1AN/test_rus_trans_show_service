@@ -41,6 +41,7 @@ class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = "transport_app/order_list.html"
     context_object_name = "orders"
+    paginate_by = 50
 
     def get_queryset(self):
         user = self.request.user
@@ -101,6 +102,7 @@ class BaseLocationListView(LoginRequiredMixin):
 class LocationListView(BaseLocationListView, ListView):
     template_name = "transport_app/location_list.html"
     context_object_name = "locations"
+    paginate_by = 50
 
 
 class LocationDetailView(BaseLocationListView, DetailView):
