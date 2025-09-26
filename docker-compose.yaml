@@ -27,6 +27,7 @@ services:
         condition: service_healthy
     volumes:
       - rus_trans_static:/app/static
+      - rus_trans_media:/app/media
     env_file:
       - .env
     command: >
@@ -59,6 +60,7 @@ services:
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - rus_trans_static:/app/static
+      - rus_trans_media:/app/media
       - certbot_www:/var/www/certbot
       - certbot_conf:/etc/letsencrypt
     networks:
@@ -71,5 +73,6 @@ networks:
 volumes:
   rus_trans_data:
   rus_trans_static:
+  rus_trans_media:
   certbot_conf:
   certbot_www:
