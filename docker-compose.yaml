@@ -39,30 +39,18 @@ services:
     networks:
       - rus_trans
 
-  certbot_init:
-    image: certbot/certbot:latest
-    volumes:
-      - certbot_conf:/etc/letsencrypt
-      - certbot_www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot -d mer1d1an.ru --email mered1an@live.com --agree-tos --no-eff-email
-    networks:
-      - rus_trans
-
   nginx:
     image: nginx:1.29.1
     container_name: rus_trans_nginx
     restart: unless-stopped
     ports:
       - "${PORT_NGINX}:${PORT_NGINX}"
-      - "${PORT_NGINX_SSL}:${PORT_NGINX_SSL}"
     depends_on:
       - app
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - rus_trans_static:/app/static
       - rus_trans_media:/app/media
-      - certbot_www:/var/www/certbot
-      - certbot_conf:/etc/letsencrypt
     networks:
       - rus_trans
 
@@ -74,5 +62,3 @@ volumes:
   rus_trans_data:
   rus_trans_static:
   rus_trans_media:
-  certbot_conf:
-  certbot_www:
