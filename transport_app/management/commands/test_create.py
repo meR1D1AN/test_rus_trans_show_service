@@ -35,8 +35,8 @@ class Command(BaseCommand):
                 "is_superuser": True,
             },
             {
-                "username": "manager_natasha",
-                "password": "manager_natashA1",
+                "username": "manager",
+                "password": "manageR1",
                 "first_name": "Наташа",
                 "last_name": "Менеджеровна",
                 "email": "manager_natasha@mer1d1an.ru",
@@ -44,8 +44,8 @@ class Command(BaseCommand):
                 "is_superuser": False,
             },
             {
-                "username": "driver_nikita",
-                "password": "driver_nikitA1",
+                "username": "driver",
+                "password": "driveR1",
                 "first_name": "Никита",
                 "last_name": "Водилов",
                 "email": "driver_nikita@mer1d1an.ru",
