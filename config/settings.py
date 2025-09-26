@@ -45,8 +45,6 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                # "crispy_forms.context_processors.crispy_forms",
-                # "crispy_forms.context_processors.crispy_bootstrap5",
             ],
         },
     },
@@ -112,6 +110,10 @@ LOGGING = {
 CSRF_TRUSTED_ORIGINS = [
     "https://mer1d1an.ru",
     "http://mer1d1an.ru",
+    "http://localhost",
+    "http://localhost:8000",
+    "http://127.0.0.1",
+    "http://127.0.0.1:8000",
 ]
 
 EMAIL_HOST = os.getenv("EMAIL_HOST")

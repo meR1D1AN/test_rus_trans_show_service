@@ -1,6 +1,5 @@
 services:
   db:
-    container_name: rus_trans_db
     image: postgres:17.6
     restart: unless-stopped
     env_file:
@@ -14,19 +13,20 @@ services:
       interval: 5s
       retries: 5
       timeout: 10s
+    networks:
+      - rus_trans
 
   app:
-    container_name: rus_trans_api
     build:
       context: .
       dockerfile: ./docker/api/Dockerfile
     ports:
-      - "${PORT_API}:${PORT_API}"
+      - "${PORT_APP}:${PORT_APP}"
     depends_on:
       db:
         condition: service_healthy
     volumes:
-      - static_data:/app/static
+      - ./static:/app/static
     env_file:
       - .env
     command: >
@@ -34,7 +34,9 @@ services:
              uv run python3 manage.py makemigrations --noinput &&
              uv run python3 manage.py migrate &&
              uv run python3 manage.py test_create &&
-             uv run gunicorn config.wsgi:application --bind 0.0.0.0:${PORT_API} --workers 3 --timeout 60 --preload'
+             uv run gunicorn config.wsgi:application --bind 0.0.0.0:${PORT_APP} --workers 3 --timeout 60 --preload'
+    networks:
+      - rus_trans
 
   certbot_init:
     image: certbot/certbot:latest
@@ -42,7 +44,8 @@ services:
       - certbot_conf:/etc/letsencrypt
       - certbot_www:/var/www/certbot
     command: certonly --webroot -w /var/www/certbot -d mer1d1an.ru --email mered1an@live.com --agree-tos --no-eff-email
-
+    networks:
+      - rus_trans
 
   nginx:
     image: nginx:1.29.1
@@ -55,12 +58,17 @@ services:
       - app
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - static_data:/app/static
+      - ./static:/app/static
       - certbot_www:/var/www/certbot
       - certbot_conf:/etc/letsencrypt  # ВАЖНО: чтобы nginx видел сертификаты
+    networks:
+      - rus_trans
+
+networks:
+  rus_trans:
+    name: rus_trans
 
 volumes:
   rus_trans_data:
   certbot_conf:
   certbot_www:
-  static_data:
